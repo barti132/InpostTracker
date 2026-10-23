@@ -3,7 +3,7 @@ package pl.bartoszsredzinski.inpostTracker.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import tools.jackson.databind.JsonNode;
+import pl.bartoszsredzinski.inpostTracker.dto.ParcelTrackingResponse;
 
 @Service
 public class InpostTrackingClient{
@@ -16,10 +16,10 @@ public class InpostTrackingClient{
                 .build();
     }
 
-    public JsonNode getTracking(String trackingNumber){
+    public ParcelTrackingResponse getTracking(String trackingNumber){
         return restClient.get()
                 .uri("/v1/tracking/{trackingNumber}", trackingNumber)
                 .retrieve()
-                .body(JsonNode.class);
+                .body(ParcelTrackingResponse.class);
     }
 }

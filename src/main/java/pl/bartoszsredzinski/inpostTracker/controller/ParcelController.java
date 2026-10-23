@@ -4,20 +4,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.bartoszsredzinski.inpostTracker.service.InpostTrackingClient;
-import tools.jackson.databind.JsonNode;
+import pl.bartoszsredzinski.inpostTracker.dto.ParcelTrackingResponse;
+import pl.bartoszsredzinski.inpostTracker.service.ParcelService;
 
 @RestController
 @RequestMapping("/api/parcels")
 public class ParcelController{
-    private final InpostTrackingClient trackingClient;
+    private final ParcelService parcelService;
 
-    public ParcelController(InpostTrackingClient trackingClient){
-        this.trackingClient = trackingClient;
+    public ParcelController(ParcelService parcelService){
+        this.parcelService = parcelService;
     }
 
     @GetMapping("/{trackingNumber}")
-    public JsonNode getTracking(@PathVariable String trackingNumber){
-        return trackingClient.getTracking(trackingNumber);
+    public ParcelTrackingResponse getTracking(@PathVariable String trackingNumber){
+        return parcelService.getTracking(trackingNumber);
     }
 }
