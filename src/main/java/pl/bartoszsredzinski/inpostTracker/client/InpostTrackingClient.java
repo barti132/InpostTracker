@@ -21,9 +21,9 @@ public class InpostTrackingClient{
         return restClient.get()
                 .uri("/v1/tracking/{trackingNumber}", trackingNumber)
                 .retrieve()
-                .onStatus(status -> status.value() == 404, ((request, response) -> {
+                .onStatus(status -> status.value() == 404, (request, response) -> {
                     throw new ParcelNotFoundException(trackingNumber);
-                }))
+                })
                 .body(ParcelTrackingResponse.class);
     }
 }

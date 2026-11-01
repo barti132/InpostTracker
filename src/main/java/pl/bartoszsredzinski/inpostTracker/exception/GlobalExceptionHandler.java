@@ -24,7 +24,7 @@ public class GlobalExceptionHandler{
     public ResponseEntity<ApiError> handleRestClientException(RestClientException e){
         log.warn("Inpost API error", e);
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                .body(new ApiError("INPOST_API_ERROR", e.getMessage()));
+                .body(new ApiError("INPOST_API_ERROR", "Failed to fetch data from InPost"));
     }
 
     @ExceptionHandler(ParcelNotFoundException.class)
@@ -35,7 +35,8 @@ public class GlobalExceptionHandler{
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception e){
+        log.error("Unexpected error", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiError("INTERNAL_SERVER_ERROR", e.getMessage()));
+                .body(new ApiError("INTERNAL_SERVER_ERROR", "Unexpected error"));
     }
 }
