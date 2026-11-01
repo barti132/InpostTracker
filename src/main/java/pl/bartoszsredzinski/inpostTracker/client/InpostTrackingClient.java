@@ -1,11 +1,12 @@
-package pl.bartoszsredzinski.inpostTracker.service;
+package pl.bartoszsredzinski.inpostTracker.client;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import pl.bartoszsredzinski.inpostTracker.dto.ParcelTrackingResponse;
+import pl.bartoszsredzinski.inpostTracker.exception.ParcelNotFoundException;
 
-@Service
+@Component
 public class InpostTrackingClient{
 
     private final RestClient restClient;
@@ -20,6 +21,9 @@ public class InpostTrackingClient{
         return restClient.get()
                 .uri("/v1/tracking/{trackingNumber}", trackingNumber)
                 .retrieve()
+                .onStatus(status -> status.value() == 404, ((request, response) -> {
+                    throw new ParcelNotFoundException(trackingNumber);
+                }))
                 .body(ParcelTrackingResponse.class);
     }
 }

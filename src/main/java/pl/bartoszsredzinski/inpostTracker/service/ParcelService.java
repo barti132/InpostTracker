@@ -1,6 +1,7 @@
 package pl.bartoszsredzinski.inpostTracker.service;
 
 import org.springframework.stereotype.Service;
+import pl.bartoszsredzinski.inpostTracker.client.InpostTrackingClient;
 import pl.bartoszsredzinski.inpostTracker.dto.ParcelTrackingResponse;
 import pl.bartoszsredzinski.inpostTracker.exception.InvalidTrackingNumberException;
 
