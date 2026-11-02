@@ -11,9 +11,8 @@ public class InpostTrackingClient{
 
     private final RestClient restClient;
 
-    public InpostTrackingClient(@Value("${inpost.api.base-url}") String baseUrl){
-        restClient = RestClient.builder()
-                .baseUrl(baseUrl)
+    public InpostTrackingClient(RestClient.Builder builder, @Value("${inpost.api.base-url}") String baseUrl){
+        restClient = builder.baseUrl(baseUrl)
                 .build();
     }
 
