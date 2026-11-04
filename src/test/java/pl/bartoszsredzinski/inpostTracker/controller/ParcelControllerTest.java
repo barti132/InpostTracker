@@ -17,8 +17,8 @@ import java.util.List;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ParcelController.class)
 class ParcelControllerTest{
@@ -89,14 +89,20 @@ class ParcelControllerTest{
     }
 
     @Test
-    void getTrackingShouldReturn404WithNotFoundWhenThereIsNoTrackingNumber() throws Exception{
-        when(parcelService.getTracking("")).thenThrow(new ParcelNotFoundException(""));
+    void getTrackingShouldReturn405WithNoResourceFoundWhenThereIsNoTrackingNumber() throws Exception{
 
         mockMvc.perform(get("/api/parcels/"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("NO_RESOURCE_FOUND"))
                 .andExpect(jsonPath("$.message").value("Resource not found"));
+    }
 
+    @Test
+    void postRequestShouldReturn405WithAllowHeader() throws Exception{
+        mockMvc.perform(post("/api/parcels/{trackingNumber}", "123"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(header().exists("Allow"))
+                .andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"));
     }
 
 

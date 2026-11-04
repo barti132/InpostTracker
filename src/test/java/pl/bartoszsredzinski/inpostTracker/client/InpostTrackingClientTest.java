@@ -29,7 +29,7 @@ class InpostTrackingClientTest{
     void setUp(){
         RestClient.Builder builder = RestClient.builder();
         server = MockRestServiceServer.bindTo(builder)
-                .build(); // PRZED utworzeniem klienta
+                .build();
         client = new InpostTrackingClient(builder, BASE_URL);
     }
 
@@ -96,6 +96,49 @@ class InpostTrackingClientTest{
 
         assertThrows(HttpServerErrorException.InternalServerError.class, () -> client.getTracking("123"));
 
+        server.verify();
+    }
+
+    @Test
+    void getTrackingShouldReturnEmptyHistoryWhenTrackingDetailsIsEmptyList(){
+        String json = """
+                {
+                  "tracking_number": "123",
+                  "status": "confirmed",
+                  "tracking_details": []
+                }
+                """;
+
+        server.expect(requestTo(TRACKING_URL))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+
+        ParcelTrackingResponse result = client.getTracking("123");
+
+        assertEquals("123", result.trackingNumber());
+        assertNotNull(result.trackingDetails());
+        assertTrue(result.trackingDetails()
+                .isEmpty());
+        server.verify();
+    }
+
+    @Test
+    void getTrackingShouldReturnEmptyHistoryWhenTrackingDetailsFieldIsMissing(){
+        String json = """
+                {
+                  "tracking_number": "123",
+                  "status": "confirmed"
+                }
+                """;
+
+        server.expect(requestTo(TRACKING_URL))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+
+        ParcelTrackingResponse result = client.getTracking("123");
+
+        assertEquals("123", result.trackingNumber());
+        assertNotNull(result.trackingDetails());
+        assertTrue(result.trackingDetails()
+                .isEmpty());
         server.verify();
     }
 }

@@ -35,15 +35,8 @@ public class GlobalExceptionHandler{
                 .body(new ApiError("PARCEL_NOT_FOUND", e.getMessage()));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleException(Exception e){
-        log.error("Unexpected error", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiError("INTERNAL_SERVER_ERROR", "Unexpected error"));
-    }
-
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ApiError> handleNoResourceFoundException(Exception e){
+    public ResponseEntity<ApiError> handleNoResourceFoundException(){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiError("NO_RESOURCE_FOUND", "Resource not found"));
     }
@@ -51,6 +44,14 @@ public class GlobalExceptionHandler{
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiError> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .headers(e.getHeaders())
                 .body(new ApiError("METHOD_NOT_ALLOWED", "Method not allowed"));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> handleException(Exception e){
+        log.error("Unexpected error", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiError("INTERNAL_SERVER_ERROR", "Unexpected error"));
     }
 }

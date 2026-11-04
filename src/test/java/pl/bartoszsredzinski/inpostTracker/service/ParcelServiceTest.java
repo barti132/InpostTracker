@@ -39,7 +39,7 @@ class ParcelServiceTest{
 
         ParcelTrackingResponse result = service.getTracking("123");
 
-        assertEquals(result, response);
+        assertEquals(response, result);
         verify(client).getTracking("123");
     }
 
@@ -53,12 +53,31 @@ class ParcelServiceTest{
     }
 
     @Test
-    void getTrackingShouldPropageteParcelNotFoundExceptionWhenClientThrows(){
+    void getTrackingShouldPropagateParcelNotFoundExceptionWhenClientThrows(){
         when(client.getTracking("123")).thenThrow(new ParcelNotFoundException("123"));
 
         assertThrows(ParcelNotFoundException.class, () -> service.getTracking("123"));
 
         verify(client).getTracking("123");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {" 123 ", "  123", "123  ", "\t123\n", "\u2003123\u2003"})
+    void getTrackingShouldPassTrimmedTrackingNumberToClientWhenNumberHasSurroundingWhitespace(String trackingNumber){
+        ParcelTrackingResponse response = createResponse("123");
+        when(client.getTracking("123")).thenReturn(response);
+
+        ParcelTrackingResponse result = service.getTracking(trackingNumber);
+
+        assertEquals(response, result);
+        verify(client).getTracking("123");
+    }
+
+    private ParcelTrackingResponse createResponse(String trackingNumber){
+        ParcelTrackingResponse.TrackingDetail detail = new ParcelTrackingResponse.TrackingDetail("status", "status",
+                OffsetDateTime.parse("2026-01-01T10:00:00+01:00"));
+        return new ParcelTrackingResponse(trackingNumber, "service", "type", "status", List.of(detail),
+                OffsetDateTime.parse("2026-01-01T10:00:00+01:00"));
     }
 
 }

@@ -18,6 +18,6 @@ public class ParcelService{
             throw new InvalidTrackingNumberException();
         }
 
-        return inpostTrackingClient.getTracking(trackingNumber);
+        return inpostTrackingClient.getTracking(trackingNumber.strip());
     }
 }
