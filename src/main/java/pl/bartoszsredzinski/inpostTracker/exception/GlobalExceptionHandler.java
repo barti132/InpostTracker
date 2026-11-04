@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import pl.bartoszsredzinski.inpostTracker.dto.ApiError;
 
 @RestControllerAdvice
@@ -38,5 +40,17 @@ public class GlobalExceptionHandler{
         log.error("Unexpected error", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiError("INTERNAL_SERVER_ERROR", "Unexpected error"));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiError> handleNoResourceFoundException(Exception e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiError("NO_RESOURCE_FOUND", "Resource not found"));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiError> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(new ApiError("METHOD_NOT_ALLOWED", "Method not allowed"));
     }
 }

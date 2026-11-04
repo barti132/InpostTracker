@@ -88,5 +88,16 @@ class ParcelControllerTest{
                 .andExpect(jsonPath("$.message").value("Unexpected error"));
     }
 
+    @Test
+    void getTrackingShouldReturn404WithNotFoundWhenThereIsNoTrackingNumber() throws Exception{
+        when(parcelService.getTracking("")).thenThrow(new ParcelNotFoundException(""));
+
+        mockMvc.perform(get("/api/parcels/"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("NO_RESOURCE_FOUND"))
+                .andExpect(jsonPath("$.message").value("Resource not found"));
+
+    }
+
 
 }
