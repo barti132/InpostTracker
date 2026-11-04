@@ -4,6 +4,20 @@ const button = document.getElementById('submit-button');
 const result = document.getElementById('result');
 const historyList = document.getElementById('history');
 
+const STATUS_LABELS = {
+    confirmed: 'Przesyłka utworzona',
+    collected_from_sender: 'Odebrana od nadawcy',
+    adopted_at_source_branch: 'Przyjęta w oddziale nadawczym',
+    sent_from_source_branch: 'Wysłana z oddziału nadawczego',
+    out_for_delivery: 'W doręczeniu',
+    ready_to_pickup: 'Gotowa do odbioru',
+    delivered: 'Doręczona',
+};
+
+function translateStatus(code) {
+    return Object.hasOwn(STATUS_LABELS, code) ? STATUS_LABELS[code] : String(code);
+}
+
 function showMessage(text, type = '') {
     result.textContent = text;
     result.className = type;
@@ -39,7 +53,8 @@ function renderHistory(details) {
 
         const status = document.createElement('span');
         status.className = 'event-status';
-        status.textContent = detail.status;
+        status.textContent = translateStatus(detail.status);
+        status.title = detail.status;
 
         item.append(date, status);
         historyList.appendChild(item);
@@ -67,7 +82,7 @@ form.addEventListener('submit', async (event) => {
         const data = await response.json().catch(() => null);
 
         if (response.ok && data) {
-            showMessage('Status: ' + data.status, 'success');
+            showMessage('Status: ' + translateStatus(data.status), 'success');
             renderHistory(data.tracking_details);
         } else if (data && data.message) {
             showMessage('Błąd (' + data.code + '): ' + data.message, 'error');
