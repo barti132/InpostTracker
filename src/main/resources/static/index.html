@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css">
+    <title>InPost Parcel Tracker</title>
+</head>
+<body>
+<main>
+    <h1>Śledzenie przesyłki InPost</h1>
+
+    <form id="tracking-form">
+        <label for="tracking-number">Numer przesyłki</label>
+        <div class="form-row">
+            <input id="tracking-number" name="trackingNumber" type="text"
+                   autocomplete="off" required>
+            <button id="submit-button" type="submit">Sprawdź</button>
+        </div>
+    </form>
+
+    <p id="result" role="status"></p>
+    <ul id="history"></ul>
+</main>
+
+<script src="app.js" defer></script>
+</body>
+</html>
